@@ -1,0 +1,27 @@
+sentinel:
+  version: "0.1.0"
+
+  scanners:
+    - name: semgrep
+      command: ["semgrep", "scan", "--json", "--config", "auto", "."]
+      type: sast
+      required: true
+
+    - name: trivy
+      command: ["trivy", "image", "--format", "json"]
+      type: sca
+      required: true
+
+    - name: checkov
+      command: ["checkov", "-d", ".", "--output", "json"]
+      type: iac
+      required: false
+
+    - name: syft
+      command: ["syft", "packages", "--output", "json"]
+      type: sbom
+      required: true
+
+  signing:
+    tool: cosign
+    required: true

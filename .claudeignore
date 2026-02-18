@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.lock
+coverage/
+dist/
+evidence.zip
+.pytest_cache/
+.git/
+htmlcov/
+**/*.png
