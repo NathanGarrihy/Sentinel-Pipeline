@@ -56,7 +56,7 @@ class TestExecutorProtocol:
     def test_mock_satisfies_protocol(self) -> None:
         mock_executor = MagicMock(spec=ExecutorProtocol)
         mock_executor.execute.return_value = ExecutionResult(
-            stdout="mocked", exit_code=0, output_hash="aaa"
+            stdout="mocked", stderr="", exit_code=0, output_hash="aaa"
         )
 
         result = mock_executor.execute(["test"])

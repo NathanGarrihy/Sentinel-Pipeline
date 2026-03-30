@@ -25,6 +25,7 @@ class ToolExecutor:
         output_hash = hashlib.sha256(stdout.encode()).hexdigest()
         return ExecutionResult(
             stdout=stdout,
+            stderr=result.stderr,
             exit_code=result.returncode,
             output_hash=output_hash,
         )

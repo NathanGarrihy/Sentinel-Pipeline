@@ -3,22 +3,22 @@ sentinel:
 
   scanners:
     - name: semgrep
-      command: ["semgrep", "scan", "--json", "--config", "auto", "."]
+      command: ["semgrep", "scan", "--json", "--config", "auto", "{target}"]
       type: sast
       required: true
 
     - name: trivy
-      command: ["trivy", "image", "--format", "json"]
+      command: ["trivy", "image", "--format", "json", "{target}"]
       type: sca
       required: true
 
     - name: checkov
-      command: ["checkov", "-d", ".", "--output", "json"]
+      command: ["checkov", "-d", "{target}", "--output", "json"]
       type: iac
       required: false
 
     - name: syft
-      command: ["syft", "packages", "--output", "json"]
+      command: ["syft", "packages", "{target}", "--output", "json"]
       type: sbom
       required: true
 

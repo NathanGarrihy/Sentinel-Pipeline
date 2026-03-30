@@ -9,13 +9,14 @@ from sentinel.models.pdr import Decision, PolicyDecisionRecord
 
 class TestExecutionResult:
     def test_frozen(self) -> None:
-        result = ExecutionResult(stdout="hello", exit_code=0, output_hash="abc123")
+        result = ExecutionResult(stdout="hello", stderr="", exit_code=0, output_hash="abc123")
         with pytest.raises(AttributeError):
             result.stdout = "changed"  # type: ignore[misc]
 
     def test_fields(self) -> None:
-        result = ExecutionResult(stdout="out", exit_code=1, output_hash="deadbeef")
+        result = ExecutionResult(stdout="out", stderr="err", exit_code=1, output_hash="deadbeef")
         assert result.stdout == "out"
+        assert result.stderr == "err"
         assert result.exit_code == 1
         assert result.output_hash == "deadbeef"
 

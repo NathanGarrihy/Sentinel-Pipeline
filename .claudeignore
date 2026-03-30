@@ -8,3 +8,4 @@ evidence.zip
 .git/
 htmlcov/
 **/*.png
+memory/

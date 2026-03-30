@@ -4,6 +4,7 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
+from sentinel.cli.scan import scan
 from sentinel.cli.verify_env import verify_env
 from sentinel.core.config import ConfigNotFoundError, ConfigParseError, load_config
 from sentinel.core.preflight import preflight_check
@@ -55,6 +56,7 @@ def _callback(
         raise typer.Exit(code=1)
 
 
+app.command("scan")(scan)
 app.command("verify-env")(verify_env)
 
 if __name__ == "__main__":
