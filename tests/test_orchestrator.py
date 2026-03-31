@@ -20,6 +20,7 @@ def _make_result(stdout: str = "", exit_code: int = 0) -> ExecutionResult:
 def _make_config(scanners: list[ScannerConfig]) -> SentinelConfig:
     return SentinelConfig(
         version="0.1.0",
+        policy_version="0.1.0",
         scanners=scanners,
         signing=SigningConfig(tool="cosign", required=True),
     )
@@ -69,6 +70,16 @@ class TestRunScan:
         assert len(results) == 2
         assert results[0].scanner_name == "semgrep"
         assert results[1].scanner_name == "trivy"
+
+    def test_target_stored_on_scan_result(self) -> None:
+        config = _make_config([
+            ScannerConfig(name="trivy", command=["trivy", "{target}"], type=ScannerType.SCA),
+        ])
+        executor = self._make_mock_executor([_make_result()])
+
+        results = run_scan(config, "myapp:latest", executor)
+
+        assert results[0].target == "myapp:latest"
 
     def test_target_is_injected_into_command(self) -> None:
         config = _make_config([

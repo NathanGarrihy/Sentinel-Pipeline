@@ -69,6 +69,11 @@ class SentinelConfig(BaseModel):
 
     Attributes:
         version: Config schema version string.
+        policy_version: Version of the policy ruleset applied during scanning.
+            Recorded in every PDR so auditors can trace decisions back to the
+            exact rules in force at the time. Intentionally separate from
+            `version` — bumping the config format must not silently alter
+            historical PDR policy references.
         scanners: List of scanner tool definitions.
         signing: Signing tool configuration.
     """
@@ -76,6 +81,7 @@ class SentinelConfig(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     version: str
+    policy_version: str
     scanners: list[ScannerConfig]
     signing: SigningConfig
 

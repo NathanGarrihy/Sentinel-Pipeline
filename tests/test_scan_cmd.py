@@ -10,11 +10,12 @@ runner = CliRunner()
 VALID_CONFIG = """\
 sentinel:
   version: "0.1.0"
+  policy_version: "0.1.0"
   scanners:
     - name: echo
       command: ["echo", "{target}"]
       type: sast
-      required: true
+      required: false
   signing:
     tool: python
 """
@@ -22,6 +23,7 @@ sentinel:
 CONFIG_WITH_OPTIONAL = """\
 sentinel:
   version: "0.1.0"
+  policy_version: "0.1.0"
   scanners:
     - name: echo
       command: ["echo", "{target}"]

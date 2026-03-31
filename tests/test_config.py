@@ -40,6 +40,7 @@ class TestSentinelConfig:
         with pytest.raises(ValidationError, match="At least one scanner"):
             SentinelConfig(
                 version="1.0",
+                policy_version="0.1.0",
                 scanners=[],
                 signing=SigningConfig(tool="cosign"),
             )
@@ -47,11 +48,13 @@ class TestSentinelConfig:
     def test_valid_config(self) -> None:
         cfg = SentinelConfig(
             version="1.0",
+            policy_version="0.1.0",
             scanners=[ScannerConfig(name="s", command=["s"], type=ScannerType.SAST)],
             signing=SigningConfig(tool="cosign"),
         )
         assert len(cfg.scanners) == 1
         assert cfg.signing.tool == "cosign"
+        assert cfg.policy_version == "0.1.0"
 
 
 class TestLoadConfig:
@@ -78,6 +81,7 @@ class TestLoadConfig:
         content = """\
 sentinel:
   version: "1.0"
+  policy_version: "0.1.0"
   scanners:
     - name: semgrep
       command: ["semgrep", "scan"]
@@ -88,6 +92,7 @@ sentinel:
         path = _minimal_yaml(tmp_path, content)
         cfg = load_config(path)
         assert cfg.version == "1.0"
+        assert cfg.policy_version == "0.1.0"
         assert len(cfg.scanners) == 1
         assert cfg.scanners[0].name == "semgrep"
         assert cfg.signing.tool == "cosign"
@@ -96,6 +101,7 @@ sentinel:
         content = """\
 sentinel:
   version: "1.0"
+  policy_version: "0.1.0"
   scanners:
     - name: checkov
       command: ["checkov", "-d", "."]

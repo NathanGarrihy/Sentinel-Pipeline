@@ -10,6 +10,7 @@ def _make_config(scanners=None, signing_tool="cosign", signing_required=True):
         ]
     return SentinelConfig(
         version="1.0",
+        policy_version="0.1.0",
         scanners=scanners,
         signing=SigningConfig(tool=signing_tool, required=signing_required),
     )

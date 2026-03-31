@@ -58,6 +58,7 @@ def run_scan(
                 scanner_name=scanner.name,
                 scanner_type=scanner.type,
                 command=tuple(command),
+                target=target,
                 result=execution_result,
             )
         )
