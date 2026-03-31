@@ -60,16 +60,16 @@ def config_with_optional(tmp_path):
 
 class TestScanCommand:
     def test_exits_zero_when_required_scanner_succeeds(self, config_file) -> None:
-        result = runner.invoke(app, ["--skip-preflight", "scan", "myapp:latest"])
+        result = runner.invoke(app, ["--skip-preflight", "scan", "--skip-signing", "myapp:latest"])
         assert result.exit_code == 0
 
     def test_target_is_injected(self, config_file) -> None:
         """The target argument must appear in the summary output."""
-        result = runner.invoke(app, ["--skip-preflight", "scan", "myapp:latest"])
+        result = runner.invoke(app, ["--skip-preflight", "scan", "--skip-signing", "myapp:latest"])
         assert "myapp:latest" in result.output
 
     def test_summary_table_contains_scanner_name(self, config_file) -> None:
-        result = runner.invoke(app, ["--skip-preflight", "scan", "."])
+        result = runner.invoke(app, ["--skip-preflight", "scan", "--skip-signing", "."])
         assert "echo" in result.output
 
     def test_missing_target_argument_exits_nonzero(self, config_file) -> None:
