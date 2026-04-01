@@ -87,6 +87,9 @@ jobs:
       - name: Run Sentinel scan
         id: sentinel
         continue-on-error: true
+        env:
+          # Prevent semgrep from phoning home, which can cause hangs in CI
+          SEMGREP_SEND_METRICS: "off"
         run: |
           SIGNING_FLAG=""
           if [[ "${{ steps.signing.outputs.skip_signing }}" == "true" ]]; then
