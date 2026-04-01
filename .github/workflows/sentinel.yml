@@ -46,15 +46,15 @@ jobs:
 
       - name: Install trivy
         run: |
-          TRIVY_VERSION="0.55.2"
-          curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" \
-            -o /tmp/trivy.tar.gz
-          sudo tar -xzf /tmp/trivy.tar.gz -C /usr/local/bin trivy
+          TRIVY_VERSION="0.69.3"
+          curl -fsSL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.deb" \
+            -o /tmp/trivy.deb
+          sudo dpkg -i /tmp/trivy.deb
 
       - name: Install syft
         run: |
-          SYFT_VERSION="1.9.0"
-          curl -sL "https://github.com/anchore/syft/releases/download/v${SYFT_VERSION}/syft_${SYFT_VERSION}_linux_amd64.tar.gz" \
+          SYFT_VERSION="1.42.3"
+          curl -fsSL "https://github.com/anchore/syft/releases/download/v${SYFT_VERSION}/syft_${SYFT_VERSION}_linux_amd64.tar.gz" \
             -o /tmp/syft.tar.gz
           sudo tar -xzf /tmp/syft.tar.gz -C /usr/local/bin syft
 
