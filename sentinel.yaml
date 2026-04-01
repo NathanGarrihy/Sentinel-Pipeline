@@ -9,7 +9,7 @@ sentinel:
       required: true
 
     - name: trivy
-      command: ["trivy", "image", "--format", "json", "{target}"]
+      command: ["trivy", "fs", "--format", "json", "{target}"]
       type: sca
       required: true
 
@@ -19,7 +19,7 @@ sentinel:
       required: false
 
     - name: syft
-      command: ["syft", "packages", "{target}", "--output", "json"]
+      command: ["syft", "scan", "{target}", "--output", "json"]
       type: sbom
       required: true
 

@@ -1,0 +1,120 @@
+name: Sentinel Policy Scan
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+# id-token: write is required for cosign keyless OIDC signing.
+# GitHub does NOT grant OIDC tokens to fork PR workflows — sentinel
+# detects this and passes --skip-signing automatically (see step below).
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  sentinel-scan:
+    name: Policy Scan & Evidence Bundle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history allows semgrep to diff against the base branch
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Sentinel
+        run: pip install -e .
+
+      # ── Security tool installation ──────────────────────────────────────
+      # Versions are pinned. Update them deliberately via a separate PR
+      # so version bumps are visible in the audit trail.
+
+      - name: Install semgrep
+        run: pip install semgrep==1.82.0
+
+      - name: Install checkov
+        run: pip install checkov==3.2.0
+
+      - name: Install trivy
+        env:
+          TRIVY_VERSION: "0.55.2"
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+            | sh -s -- -b /usr/local/bin "v${TRIVY_VERSION}"
+
+      - name: Install syft
+        env:
+          SYFT_VERSION: "1.9.0"
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
+            | sh -s -- -b /usr/local/bin "v${SYFT_VERSION}"
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da  # v3.7.0
+        with:
+          cosign-release: "v2.4.1"
+
+      # ── Signing mode detection ──────────────────────────────────────────
+      # Fork PRs do not receive an OIDC token from GitHub — cosign keyless
+      # signing will always fail in that context. Detect it early and set
+      # a flag so the scan step can pass --skip-signing gracefully.
+
+      - name: Detect signing mode
+        id: signing
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" && \
+                "${{ github.event.pull_request.head.repo.fork }}" == "true" ]]; then
+            echo "skip_signing=true" >> "$GITHUB_OUTPUT"
+            echo "Signing SKIPPED — fork PR, OIDC token not available."
+          else
+            echo "skip_signing=false" >> "$GITHUB_OUTPUT"
+            echo "Signing ENABLED."
+          fi
+
+      # ── Sentinel scan ───────────────────────────────────────────────────
+      # continue-on-error: true — do not fail the job here. We must upload
+      # the evidence bundle before surfacing the failure (step below).
+
+      - name: Run Sentinel scan
+        id: sentinel
+        continue-on-error: true
+        run: |
+          SIGNING_FLAG=""
+          if [[ "${{ steps.signing.outputs.skip_signing }}" == "true" ]]; then
+            SIGNING_FLAG="--skip-signing"
+          fi
+          sentinel scan . --output evidence.zip $SIGNING_FLAG
+
+      # ── Evidence bundle upload ──────────────────────────────────────────
+      # Always upload — auditors need the bundle regardless of pass/fail.
+      # Named by commit SHA so bundles from multiple runs are distinguishable.
+
+      - name: Upload evidence bundle
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-bundle-${{ github.sha }}
+          path: evidence.zip
+          retention-days: 90
+          # Upload even when evidence.zip doesn't exist (e.g. preflight failed
+          # before the bundle could be written) — if-no-files-found: warn
+          # keeps the job from erroring on the upload step itself.
+          if-no-files-found: warn
+
+      # ── Enforce sentinel exit code ──────────────────────────────────────
+      # Now that the bundle is uploaded, propagate the sentinel failure.
+
+      - name: Enforce policy gate
+        if: steps.sentinel.outcome == 'failure'
+        run: |
+          echo "::error::Sentinel policy scan failed. Download the evidence bundle for details."
+          exit 1
