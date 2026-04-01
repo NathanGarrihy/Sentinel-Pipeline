@@ -45,18 +45,18 @@ jobs:
         run: pip install checkov==3.2.0
 
       - name: Install trivy
-        env:
-          TRIVY_VERSION: "0.55.2"
         run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
-            | sudo sh -s -- -b /usr/local/bin "v${TRIVY_VERSION}"
+          TRIVY_VERSION="0.55.2"
+          curl -sL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" \
+            -o /tmp/trivy.tar.gz
+          sudo tar -xzf /tmp/trivy.tar.gz -C /usr/local/bin trivy
 
       - name: Install syft
-        env:
-          SYFT_VERSION: "1.9.0"
         run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
-            | sudo sh -s -- -b /usr/local/bin "v${SYFT_VERSION}"
+          SYFT_VERSION="1.9.0"
+          curl -sL "https://github.com/anchore/syft/releases/download/v${SYFT_VERSION}/syft_${SYFT_VERSION}_linux_amd64.tar.gz" \
+            -o /tmp/syft.tar.gz
+          sudo tar -xzf /tmp/syft.tar.gz -C /usr/local/bin syft
 
       - name: Install cosign
         uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da  # v3.7.0
