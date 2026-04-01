@@ -39,10 +39,10 @@ jobs:
       # so version bumps are visible in the audit trail.
 
       - name: Install semgrep
-        run: pip install semgrep==1.150.0
+        run: pip install semgrep==1.157.0
 
       - name: Install checkov
-        run: pip install checkov==3.2.0
+        run: pip install checkov==3.2.513
 
       - name: Install trivy
         run: |
@@ -79,16 +79,6 @@ jobs:
             echo "skip_signing=false" >> "$GITHUB_OUTPUT"
             echo "Signing ENABLED."
           fi
-
-      # ── Semgrep diagnostic (temporary) ─────────────────────────────────
-      - name: Debug semgrep
-        run: |
-          echo "=== version ==="
-          semgrep --version
-          echo "=== direct scan ==="
-          semgrep scan --json --metrics=off --config .semgrep.yml . ; echo "EXIT:$?"
-          echo "=== stderr only ==="
-          semgrep scan --json --metrics=off --config .semgrep.yml . 2>&1 1>/dev/null ; echo "EXIT:$?"
 
       # ── Sentinel scan ───────────────────────────────────────────────────
       # continue-on-error: true — do not fail the job here. We must upload
