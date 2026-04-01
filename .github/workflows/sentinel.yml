@@ -39,7 +39,7 @@ jobs:
       # so version bumps are visible in the audit trail.
 
       - name: Install semgrep
-        run: pip install setuptools semgrep==1.82.0
+        run: pip install semgrep==1.150.0
 
       - name: Install checkov
         run: pip install checkov==3.2.0
