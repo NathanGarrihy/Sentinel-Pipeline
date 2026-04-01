@@ -4,7 +4,7 @@ sentinel:
 
   scanners:
     - name: semgrep
-      command: ["semgrep", "scan", "--json", "--config", "p/python", "--config", "p/secrets", "--metrics=off", "{target}"]
+      command: ["semgrep", "scan", "--json", "--metrics=off", "--config", ".semgrep.yml", "{target}"]
       type: sast
       required: true
 
