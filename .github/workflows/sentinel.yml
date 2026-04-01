@@ -80,6 +80,16 @@ jobs:
             echo "Signing ENABLED."
           fi
 
+      # ── Semgrep diagnostic (temporary) ─────────────────────────────────
+      - name: Debug semgrep
+        run: |
+          echo "=== version ==="
+          semgrep --version
+          echo "=== direct scan ==="
+          semgrep scan --json --metrics=off --config .semgrep.yml . ; echo "EXIT:$?"
+          echo "=== stderr only ==="
+          semgrep scan --json --metrics=off --config .semgrep.yml . 2>&1 1>/dev/null ; echo "EXIT:$?"
+
       # ── Sentinel scan ───────────────────────────────────────────────────
       # continue-on-error: true — do not fail the job here. We must upload
       # the evidence bundle before surfacing the failure (step below).
