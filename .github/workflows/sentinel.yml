@@ -38,8 +38,13 @@ jobs:
       # Versions are pinned. Update them deliberately via a separate PR
       # so version bumps are visible in the audit trail.
 
+      # semgrep pins click~=8.1.8 which conflicts with typer's click>=8.2 requirement.
+      # Install semgrep in an isolated venv so it cannot downgrade sentinel's click.
       - name: Install semgrep
-        run: pip install semgrep==1.157.0
+        run: |
+          python -m venv /opt/semgrep-env
+          /opt/semgrep-env/bin/pip install semgrep==1.157.0
+          echo "/opt/semgrep-env/bin" >> $GITHUB_PATH
 
       - name: Install checkov
         run: pip install checkov==3.2.513
