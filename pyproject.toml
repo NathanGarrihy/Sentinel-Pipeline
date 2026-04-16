@@ -9,7 +9,7 @@ description = "Policy-Enforced Delivery Control Plane"
 requires-python = ">=3.12"
 dependencies = [
     "typer[all]>=0.12",
-    "click>=8.1.7",
+    "click>=8.2.0",
     "rich>=13.0",
     "pydantic>=2.0",
     "pydantic-settings>=2.0",
