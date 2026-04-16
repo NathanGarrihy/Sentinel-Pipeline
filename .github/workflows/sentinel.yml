@@ -92,6 +92,8 @@ jobs:
       - name: Run Sentinel scan
         id: sentinel
         continue-on-error: true
+        env:
+          COSIGN_YES: "true"
         run: |
           SIGNING_FLAG=""
           if [[ "${{ steps.signing.outputs.skip_signing }}" == "true" ]]; then
