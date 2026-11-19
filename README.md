@@ -25,6 +25,6 @@ Sentinel enforces policy-driven delivery by strictly separating:
 
 ## 🚀 Technical Stack
 * **Orchestration:** GitHub Actions
-* **Application:** Python (FastAPI) / Docker
-* **Infrastructure:** Terraform / LocalStack
+* **Application:** Python 3.12 CLI (Typer, Pydantic)
+* **Planned (not yet built):** FastAPI service, Docker packaging, Terraform / LocalStack environment
 * **Security Tools:** Semgrep, Trivy, Syft, Checkov, Cosign
